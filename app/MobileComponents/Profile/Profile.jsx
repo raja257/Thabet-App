@@ -2,11 +2,10 @@ import Image from 'next/image'
 import React from 'react'
 import { FiBell } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa6";
-
 const Profile = () => {
   return (
     <>
-    <div className='w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] h-[278px] py-5 px-5'>
+    <div className='w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] py-5 px-5'>
      <div className='w-full flex items-center justify-between'>
        <div className='flex gap-3'>
         <Image src='/Profile/school-profile-image.svg' alt='' width={40} height={40} className='rounded-full'   />
@@ -18,7 +17,7 @@ const Profile = () => {
         </div> 
      <FiBell  className='text-[#FFFFFF] text-[20px]' />
       </div>   
-     <div className='w-full flex flex-wrap gap-4 my-[16px]'>
+     {/* <div className='w-full flex flex-wrap gap-4 my-[16px]'>
        <div className='w-[47%] py-2 border-[2px] rounded-[12px] bg-[#FFFFFF] custom px-[12px]'>
         <div className='w-full flex justify-between'>
          <span className='text-[#171C1B] text-[24px] font-medium'>5</span>
@@ -47,7 +46,7 @@ const Profile = () => {
         </div>
         <p className='text-[#485952] text-[12px] font-medium'>Unread Messages</p>
        </div>
-     </div>
+     </div> */}
     </div>
 
     <div className='w-full py-[16px] px-5'>

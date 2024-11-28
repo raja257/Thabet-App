@@ -94,14 +94,7 @@ const SingleGradeTabContent = () => {
   return (
     <>
       <div className="w-full pb-10">
-        <div className="search-bar relative">
-          <input
-            type="search"
-            placeholder="Search students"
-            className="w-full pl-8 py-3 border-[1px] border-[#E1E6E4] rounded-[8px] placeholder:text-[#5C7069]"
-          />
-          <FiSearch className="absolute top-4 text-[#C2CDC8] text-[18px] left-2" />
-        </div>
+  
 
         <div className="w-full mt-[16px]">
           {students.map((student) => (

@@ -4,12 +4,14 @@ import React,{useState} from 'react'
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import { useFormik } from 'formik';
+
 const initialValues={
   email:"",
   password:""
 }
 const TeacherForm = () => {
     const [password,setPassword] =useState(false)
+ 
   const handlePassword=()=>{
      setPassword(!password)
   }
@@ -17,6 +19,7 @@ const TeacherForm = () => {
     initialValues:initialValues,
     onSubmit:(values,{resetForm})=>{
       console.log(values)
+     
       resetForm()
     }
   })
@@ -58,7 +61,10 @@ const TeacherForm = () => {
           <input type="checkbox"  />
             <p className="text-[12px] text-[#5C7069] font-normal">Remember me</p>
           </div>
-          <span className="font-medium text-[#2C8D38] text-[12px]">Forgot password?</span>
+         
+           <span className="font-medium text-[#2C8D38] text-[12px]">Create an account</span>  
+      
+         
         </div>
         <div className="w-full 2xl:mt-[24px] mt-[16px]">
          <button className="xl:w-[80%] w-[100%] h-[48px] bg-[#2C8D38] text-[#FFFFFF] text-[16px] font-medium rounded-[12px]" type='submit'>

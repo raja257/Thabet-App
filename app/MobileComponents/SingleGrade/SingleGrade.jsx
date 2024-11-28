@@ -16,25 +16,10 @@ const SingleGrade = () => {
      
       <p className='text-[#9CACA6] text-[14px] font-normal pt-[2px]'>Manage students, attendance, and certificates.</p>
     </div>
-    <div className='w-full flex gap-5 mt-[16px] pl-5 overflow-x-scroll pb-3'> 
-  
-          {['All','English', 'Science', 'Math'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`text-[16px] font-medium  rounded-[6px] py-1.5 px-5 ${
-                activeTab === tab ? 'bg-[#C7110E] text-[#FFFFFF]' : 'bg-[#E1E6E4] text-[#171C1B] '
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-    </div>
+    
         <div className="mt-4 p-4">
-          {activeTab === 'All' && <div className='w-full'><SingleGradeTabContent /> </div>
-          }
-          {activeTab === 'Parent' && <div className='w-full'>pp </div>}
-          {activeTab === 'Student' && <div className='w-full'>dd </div>}
+        <SingleGradeTabContent />
+         
         </div>
     </>
   )
