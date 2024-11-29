@@ -18,10 +18,32 @@ const TeacherForm = () => {
   const formik=useFormik({
     initialValues:initialValues,
     onSubmit:(values,{resetForm})=>{
-      console.log(values)
+      handleAdd(values)
       resetForm()
     }
   })
+  const handleAdd = async (data) => {
+    try {
+    const response = await fetch("http://localhost:8000/user/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to save grade");
+          }
+  
+          const result = await response.json();
+          console.log("student get  successfully:", result);
+          setStudents(result.data)
+        } catch (error) {
+          console.log("Error saving grade:", error.message);
+          alert("There was an error saving the grade. Please try again.");
+        }
+      } 
   return (
     <>
     <div className='w-full'>
