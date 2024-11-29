@@ -6,22 +6,35 @@ import { FaPlus } from "react-icons/fa6";
 const Grade = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [grades, setGrades] = useState([]); // Initially an empty array
-  const [newGrade, setNewGrade] = useState({ class_name: "", subjects: [] ,teacher_id:"672487302c602162702a20aa"});
+  
   const [newSubject, setNewSubject] = useState("");
   const [newStartTime, setNewStartTime] = useState("");
   const [newEndTime, setNewEndTime] = useState("");
+  const [userData, setUserData] = useState(null);
+  console.log(userData,"profile roles")
+  const id=userData?._id
+  console.log(id)
+  const [newGrade, setNewGrade] = useState();
+  useEffect(() => {
+    const data =JSON.parse(localStorage.getItem("userData")) ;
+ if (data) {
+      setUserData(data); 
+      setTimeout(()=>{
+        fetchGrade(data._id);
+        setNewGrade({ class_name: "", subjects: [] ,teacher_id:data._id});
+      },[3000])
+    } 
+  }, []);
 
-  const teacher_id = "672487302c602162702a20aa";
-
-  // Fetch grades from the API
-  const fetchGrade = async () => {
+  const teacher_id = id;
+  const fetchGrade = async (id) => {
     try {
       const response = await fetch("http://localhost:8000/class/get_class", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ teacher_id }),
+        body: JSON.stringify({ teacher_id:id }),
       });
 
       if (!response.ok) {
@@ -41,9 +54,7 @@ const Grade = () => {
     }
   };
 
-  useEffect(() => {
-    fetchGrade();
-  }, []);
+ 
 
   const handleAddSubject = () => {
     if (newSubject && newStartTime && newEndTime) {
@@ -73,7 +84,6 @@ const Grade = () => {
         if (!response.ok) {
           throw new Error("Failed to save grade");
         }
-
         const result = await response.json();
         setGrades([...grades, newGrade]);
         setNewGrade({ class_name: "", subjects: [] });
@@ -89,8 +99,8 @@ const Grade = () => {
     }
   };
   const router=useRouter()
-  const handleCardClick = () => {
-    router.push(`/singlegrade`);
+  const handleCardClick = (id) => {
+    router.push(`/grade/${id}`);
   };
   return (
     <>
@@ -104,7 +114,7 @@ const Grade = () => {
         {grades.map((grade, index) => (
           <div
             key={index}
-            onClick={() => handleCardClick(grade.class_name)}
+            onClick={() => handleCardClick(grade._id)}
             className="card w-full bg-[#E1E6E4] rounded-[12px] py-5 px-4 mb-[8px]"
           >
             <h2 className="text-[20px] font-medium text-[#000000]">

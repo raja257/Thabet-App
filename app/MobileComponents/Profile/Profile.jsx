@@ -1,154 +1,349 @@
-import Image from 'next/image'
-import React from 'react'
+"use client";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { FiBell } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 const Profile = () => {
+  const [studentperiod,setStudentPeriod]=useState([])
+  const [popupVisible, setPopupVisible] = useState(false); // Popup visibility state
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [periods, setPeriods] = useState([]);
+  const [userData, setUserData] = useState(null);
+  console.log(userData,"profile roles")
+  const name = `${userData?.first_name || ''} ${userData?.last_name || ''}`.trim();
+  const role = userData?.role;
+  const id="6746c1a851a6b86a7ef7655d"
+  const [child,setChild]=useState([])
+  useEffect(() => {
+    const data = localStorage.getItem("userData");
+ if (data) {
+      setUserData(JSON.parse(data)); 
+    }
+  }, []);
+  const teacher_id = id;
+  const handleGetPeriods = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/class/get_periods", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ teacher_id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch periods");
+      }
+      const result = await response.json();
+      setPeriods(result.data);
+    } catch (error) {
+      console.error("Error fetching periods:", error.message);
+      alert("There was an error fetching the periods. Please try again.");
+    }
+  };
+  useEffect(() => {
+    handleGetPeriods();
+    handleGetchild()
+  }, []);
+  const handleGetchild = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/user/get_child", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _id:id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch periods");
+      }
+      const result = await response.json();
+      console.log(result,"child")
+      setChild(result.data);
+    } catch (error) {
+      console.error("Error fetching periods:", error.message);
+      alert("There was an error fetching the periods. Please try again.");
+    }
+  };
+  const cardsData = periods.map((period) => ({
+    time: `${period.subjects.start_time} - ${period.subjects.end_time}`,
+    grade: period.class_name,
+    status: { text: "Pending", color: "#D6A730" },
+    subject: period.subjects.name,
+    room: period.room || "N/A",
+    students: period.students_count || 0,
+    actions: [
+      { text: "Mark Attendance", color: "#FFFFFF", bg: "#2C8D38" },
+      { text: "View Students", color: "#262C2A", bg: "transparent" },
+    ],
+  }));
+    const students = child.map((data, index) => ({
+      id: data._id, 
+      initials: data.name
+        .split(" ")
+        .map((n) => n[0].toUpperCase())
+        .join(""), 
+      fullName: data.name,
+      grade: data.grade,
+    }));
+  const router=useRouter()
+   const handleCertificate =(allstudents)=>{
+    router.push(`/profile/${allstudents}`);
+   }  
+ 
+
+  const getStudentPeriods=async(student_id)=>{
+    console.log(student_id,"iiddddddddd")
+    try {
+      const response = await fetch("http://localhost:8000/class/get_periods_by_student", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _id:student_id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch periods");
+      }
+      const result = await response.json();
+      console.log(result,"getperiodsStudents")
+      setStudentPeriod(result.data);
+    } catch (error) {
+      console.error("Error fetching periods:", error.message);
+      alert("There was an error fetching the periods. Please try again.");
+    }
+  }
+  const handleViewStudent = (student) => {
+    getStudentPeriods(student.id)
+    setSelectedStudent(student); // Set the selected student
+    setPopupVisible(true); // Show the popup
+  };
+  const closePopup = () => {
+    setPopupVisible(false); // Close the popup
+    setSelectedStudent(null); // Clear the selected student
+  };
   return (
     <>
-    <div className='w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] py-5 px-5'>
-     <div className='w-full flex items-center justify-between'>
-       <div className='flex gap-3'>
-        <Image src='/Profile/school-profile-image.svg' alt='' width={40} height={40} className='rounded-full'   />
-        <div>
-        <span className='text-[#C2CDC8] text-[12px] font-normal'>Good Morning,</span>
-        <h2 className='text-[#FFFFFF] text-[14px] font-medium '>Mr. Afsal! 👋</h2>
-        </div>
-      
-        </div> 
-     <FiBell  className='text-[#FFFFFF] text-[20px]' />
-      </div>   
-     {/* <div className='w-full flex flex-wrap gap-4 my-[16px]'>
-       <div className='w-[47%] py-2 border-[2px] rounded-[12px] bg-[#FFFFFF] custom px-[12px]'>
-        <div className='w-full flex justify-between'>
-         <span className='text-[#171C1B] text-[24px] font-medium'>5</span>
-         <Image src='/Profile/profile-card-class.svg' alt='' width={30} height={30}  className=''  />
-        </div>
-        <p className='text-[#485952] text-[12px] font-medium'>Classes Today</p>
-       </div>
-       <div className='w-[47%] py-2 border-[2px] rounded-[12px] bg-[#FFFFFF] custom px-[12px]'>
-        <div className='w-full flex justify-between'>
-         <span className='text-[#171C1B] text-[24px] font-medium'>5</span>
-         <Image src='/Profile/profile-card-person.svg' alt='' width={30} height={30}  className=''  />
-        </div>
-        <p className='text-[#485952] text-[12px] font-medium'>Total Students</p>
-       </div>
-       <div className='w-[47%] py-2 border-[2px] rounded-[12px] bg-[#FFFFFF] custom px-[12px]'>
-        <div className='w-full flex justify-between'>
-         <span className='text-[#171C1B] text-[24px] font-medium'>5</span>
-         <Image src='/Profile/profile-card-attandence.svg' alt='' width={30} height={30}  className=''  />
-        </div>
-        <p className='text-[#485952] text-[12px] font-medium'>Pending Attendance</p>
-       </div>
-       <div className='w-[47%] py-2 border-[2px] rounded-[12px] bg-[#FFFFFF] custom px-[12px]'>
-        <div className='w-full flex justify-between'>
-         <span className='text-[#171C1B] text-[24px] font-medium'>5</span>
-         <Image src='/Profile/profile-card-message.svg' alt='' width={30} height={30}  className=''  />
-        </div>
-        <p className='text-[#485952] text-[12px] font-medium'>Unread Messages</p>
-       </div>
-     </div> */}
-    </div>
-
-    <div className='w-full py-[16px] px-5'>
-       <p className='text-[#3C4945] text-[12px] font-normal'>Today - Thu, 07 November</p>
-      <div className='w-full mt-[8px]'>
-        <div className='flex items-center gap-3'>
-         <FaRegClock className='text-[#485952] text-[14px]' />
-         <span className='text-[#485952] text-[14px] font-medium'>9 AM - 10 AM</span>
-        </div>
-        <div className='w-full flex justify-end mt-[8px]'>
-        <div className='w-[95%] border-[1px] border-[#E1E6E4] rounded-[12px] bg-[linear-gradient(180deg,_#FFFFFF_0%,_#F1F7F5_100%)]  py-3 px-3'>
-        <div className='w-full flex items-center justify-between'>
-         <span className='text-[#A41210] text-[12px] font-normal'>Grade 4</span>
-         <button className='text-[#2C8D38] text-[12px] font-medium border-[1px] border-[#2C8D38] rounded-[4px] py-0.5 px-2'>Completed</button>
-        </div>    
-        <h1 className='text-[#171C1B] text-[16px] font-medium'>Mathematics</h1>
-        <div className='flex justify-between mt-[8px]'>
-            <div className='flex items-center gap-2'>
-                <Image src='/Profile/profile-card-room.svg' alt='' width={20} height={20} className=''  />
-                <h3 className='text-[#485952] text-[12px] font-normal'>Room <span className='text-[#485952] text-[14px] font-medium'>A3</span></h3>
+      <div className="w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] py-5 px-5">
+        <div className="w-full flex items-center justify-between">
+          <div className="flex gap-3">
+            <Image
+              src="/Profile/school-profile-image.svg"
+              alt=""
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            <div>
+              <span className="text-[#C2CDC8] text-[12px] font-normal">
+                Good Morning,
+              </span>
+              <h2 className="text-[#FFFFFF] text-[14px] font-medium capitalize">
+                {name} 👋
+              </h2>
             </div>
-            <div className='flex items-center gap-2'>
-                <Image src='/Profile/profile-card-person.svg' alt='' width={20} height={20} className=''  />
-                <h3 className='text-[#485952] text-[12px] font-normal'>Students <span className='text-[#485952] text-[14px] font-medium'>25</span></h3>
-            </div>
+          </div>
+          <FiBell className="text-[#FFFFFF] text-[20px]" />
         </div>
-        <div className='w-full flex justify-end mt-[8px]'>
-            <button className='text-[#262C2A] text-[14px] font-medium border-[1px] border-[#171C1B] rounded-[6px] py-1.5 px-3'>View Students</button>
+      </div>
+      <div>
+    {(role === 'teacher' || role === 'student') && (
+      <div className="w-full py-[16px] px-5 Teacher">
+        <p className="text-[#3C4945] text-[12px] font-normal">
+          Today - Thu, 07 November
+        </p>
 
-        </div>
+        {cardsData.map((card, index) => (
+          <div className="w-full mt-[8px] card" key={index}>
+            <div className="flex items-center gap-3">
+              <FaRegClock className="text-[#485952] text-[14px]" />
+              <span className="text-[#485952] text-[14px] font-medium">
+                {card.time}
+              </span>
+            </div>
+
+            <div className="w-full flex justify-end mt-[8px]">
+              <div className="w-[95%] border-[1px] border-[#E1E6E4] rounded-[12px] bg-[linear-gradient(180deg,_#FFFFFF_0%,_#F1F7F5_100%)] py-3 px-3">
+                <div className="w-full flex items-center justify-between">
+                  <span className="text-[#A41210] text-[12px] font-normal">
+                    {card.grade}
+                  </span>
+                  <button
+                    className={`text-[12px] font-medium border-[1px] rounded-[4px] py-0.5 px-2`}
+                    style={{
+                      color: card.status.color,
+                      borderColor: card.status.color,
+                    }}
+                  >
+                    {card.status.text}
+                  </button>
+                </div>
+                <h1 className="text-[#171C1B] text-[16px] font-medium">
+                  {card.subject}
+                </h1>
+
+                <div className="flex justify-between mt-[8px]">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/Profile/profile-card-room.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                    <h3 className="text-[#485952] text-[12px] font-normal">
+                      Room{" "}
+                      <span className="text-[#485952] text-[14px] font-medium">
+                        {card.room}
+                      </span>
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/Profile/profile-card-person.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                    <h3 className="text-[#485952] text-[12px] font-normal">
+                      Students{" "}
+                      <span className="text-[#485952] text-[14px] font-medium">
+                        {card.students}
+                      </span>
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="w-full flex flex-wrap justify-between mt-[8px]">
+                  {card.actions.map((action, i) => (
+                    <button
+                      key={i}
+                      className={`text-[14px] font-medium border-[1px] rounded-[6px] py-1.5 px-3`}
+                      style={{
+                        color: action.color,
+                        background: action.bg,
+                        borderColor: action.color,
+                      }}
+                    >
+                      {action.text}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {(role === 'parent' ) && (
+      <div className="w-full py-[16px] px-5 parent">
+        <h2 className="text-[16px] text-[#000000] font-medium">Students</h2>
+        {students.map((student) => (
+          <div
+            key={student._id}
+            className="border-[1px] border-[#E1E6E4] bg-[#FFFFFF] rounded-[12px] py-[8px] px-[8px] mt-[8px] card"
+          >
+            <div className="flex gap-4">
+              <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
+                {student.initials}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-[#000000] text-[16px] font-medium capitalize">
+                    {student.fullName}
+                  </h2>
+                </div>
+                <span className="text-[#768B82] text-[12px] font-normal">
+                  {student.grade}
+                </span>
+              </div>
+            </div>
+            <div className="w-full flex justify-between mt-[8px]">
+              <button className="border-[1px] border-[#C2CDC8] text-[#3C4945] text-[14px] font-medium py-2 rounded-[6px] w-[45%]"  onClick={() => handleViewStudent(student)}>
+                View
+              </button>
+              <button className="border-[1px] border-[#C2CDC8] text-[#3C4945] text-[14px] font-medium py-2 rounded-[6px] w-[45%]" onClick={()=>handleCertificate(student.fullName)}>
+                View Certificate
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+       </div>
+   {/* Popup */}
+   {popupVisible && (
+  <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-end z-50">
+  <div className="bg-white rounded-t-[24px] p-6 w-[100%] " onClick={closePopup}>
+    <div className="flex gap-4">
+              <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
+                {selectedStudent.initials}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-[#000000] text-[16px] font-medium capitalize">
+                    {selectedStudent.fullName}
+                  </h2>
+                </div>
+                <span className="text-[#768B82] text-[12px] font-normal">
+                  {selectedStudent.grade}
+                </span>
+              </div>
+     </div>
+     <div className="w-full py-[16px]  Teacher">
+        {/* <p className="text-[#3C4945] text-[12px] font-normal">
+          Today - Thu, 07 November
+        </p> */}
+        {
+          studentperiod?.map((item,i)=>(
+            <div className="w-full mt-[8px] card" key={i}>
+            <div className="flex items-center gap-3">
+              <FaRegClock className="text-[#485952] text-[14px]" />
+              <span className="text-[#485952] text-[14px] font-medium">
+              {item.start_time}-{item.end_time}
+              </span>
+            </div>
+
+            <div className="w-full flex justify-end mt-[8px]">
+              <div className="w-[95%] border-[1px] border-[#E1E6E4] rounded-[12px] bg-[linear-gradient(180deg,_#FFFFFF_0%,_#F1F7F5_100%)] py-3 px-3">
+                <div className="w-full flex items-center justify-between">
+                <h1 className="text-[#171C1B] text-[16px] font-medium">
+                {item.subject}
+                </h1>
+                  <button
+                    className={`text-[12px] font-medium border-[1px] rounded-[4px] py-0.5 px-2`}
+                  
+                  >
+                   Completed
+                  </button>
+                </div>
+                
+
+
+              
+              </div>
+            </div>
+          </div>
+          ))
+        }
          
-        </div>
-        </div>
-     
-      </div> 
-      <div className='w-full mt-[8px]'>
-        <div className='flex items-center gap-3'>
-         <FaRegClock className='text-[#485952] text-[14px]' />
-         <span className='text-[#485952] text-[14px] font-medium'>9 AM - 10 AM</span>
-        </div>
-        <div className='w-full flex justify-end mt-[8px]'>
-        <div className='w-[95%] border-[1px] border-[#E1E6E4] rounded-[12px] bg-[linear-gradient(180deg,_#FFFFFF_0%,_#F1F7F5_100%)]  py-3 px-3'>
-        <div className='w-full flex items-center justify-between'>
-         <span className='text-[#A41210] text-[12px] font-normal'>Grade 4</span>
-         <button className='text-[#D6A730] text-[12px] font-medium border-[1px] border-[#D6A730] rounded-[4px] py-0.5 px-2'>Pending</button>
-        </div>    
-        <h1 className='text-[#171C1B] text-[16px] font-medium'>Mathematics</h1>
-        <div className='flex justify-between mt-[8px]'>
-            <div className='flex items-center gap-2'>
-                <Image src='/Profile/profile-card-room.svg' alt='' width={20} height={20} className=''  />
-                <h3 className='text-[#485952] text-[12px] font-normal'>Room <span className='text-[#485952] text-[14px] font-medium'>A3</span></h3>
-            </div>
-            <div className='flex items-center gap-2'>
-                <Image src='/Profile/profile-card-person.svg' alt='' width={20} height={20} className=''  />
-                <h3 className='text-[#485952] text-[12px] font-normal'>Students <span className='text-[#485952] text-[14px] font-medium'>25</span></h3>
-            </div>
-        </div>
-        <div className='w-full flex flex-wrap justify-between  mt-[8px]'>
-            <button className='text-[#FFFFFF] text-[14px] font-medium border-[1px] border-[#171C1B] rounded-[6px] py-1.5 px-3 bg-[linear-gradient(0deg,_#2C8D38,_#2C8D38),_linear-gradient(0deg,_rgba(255,_255,_255,_0)_0%,_rgba(255,_255,_255,_0.2)_100%)]'>Mark Attendance</button>
-            <button className='text-[#262C2A] text-[14px] font-medium border-[1px] border-[#171C1B] rounded-[6px] py-1.5 px-3'>View Students</button>
+      </div>
+    <button
+      onClick={closePopup}
+      className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+    >
+      Close
+    </button>
+  </div>
+</div>
+)}
 
-        </div>
-         
-        </div>
-        </div>
-     
-      </div> 
-      <div className='w-full mt-[8px]'>
-        <div className='flex items-center gap-3'>
-         <FaRegClock className='text-[#485952] text-[14px]' />
-         <span className='text-[#485952] text-[14px] font-medium'>9 AM - 10 AM</span>
-        </div>
-        <div className='w-full flex justify-end mt-[8px]'>
-        <div className='w-[95%] border-[1px] border-[#E1E6E4] rounded-[12px] bg-[linear-gradient(180deg,_#FFFFFF_0%,_#F1F7F5_100%)]  py-3 px-3'>
-        <div className='w-full flex items-center justify-between'>
-         <span className='text-[#A41210] text-[12px] font-normal'>Grade 4</span>
-         <button className='text-[#D6A730] text-[12px] font-medium border-[1px] border-[#D6A730] rounded-[4px] py-0.5 px-2'>Pending</button>
-        </div>    
-        <h1 className='text-[#171C1B] text-[16px] font-medium'>Mathematics</h1>
-        <div className='flex justify-between mt-[8px]'>
-            <div className='flex items-center gap-2'>
-                <Image src='/Profile/profile-card-room.svg' alt='' width={20} height={20} className=''  />
-                <h3 className='text-[#485952] text-[12px] font-normal'>Room <span className='text-[#485952] text-[14px] font-medium'>A3</span></h3>
-            </div>
-            <div className='flex items-center gap-2'>
-                <Image src='/Profile/profile-card-person.svg' alt='' width={20} height={20} className=''  />
-                <h3 className='text-[#485952] text-[12px] font-normal'>Students <span className='text-[#485952] text-[14px] font-medium'>25</span></h3>
-            </div>
-        </div>
-        <div className='w-full flex flex-wrap justify-between  mt-[8px]'>
-            <button className='text-[#FFFFFF] text-[14px] font-medium border-[1px] border-[#171C1B] rounded-[6px] py-1.5 px-3 bg-[linear-gradient(0deg,_#2C8D38,_#2C8D38),_linear-gradient(0deg,_rgba(255,_255,_255,_0)_0%,_rgba(255,_255,_255,_0.2)_100%)]'>Mark Attendance</button>
-            <button className='text-[#262C2A] text-[14px] font-medium border-[1px] border-[#171C1B] rounded-[6px] py-1.5 px-3'>View Students</button>
 
-        </div>
-         
-        </div>
-        </div>
-     
-      </div> 
-    </div>
     </>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

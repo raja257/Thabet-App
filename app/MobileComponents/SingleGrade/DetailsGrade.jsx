@@ -61,7 +61,7 @@ const DetailsGrade = () => {
      
     </div>
     <div className='w-full px-3 my-[16px]'>
-       <div className='card w-full bg-[#F6F7F7] border-[1px] border-[#E1E6E4] rounded-[8px] py-3 px-2 flex justify-between mb-[6px]'> 
+       {/* <div className='card w-full bg-[#F6F7F7] border-[1px] border-[#E1E6E4] rounded-[8px] py-3 px-2 flex justify-between mb-[6px]'> 
          <div className='flex items-center gap-2'>
             <Image src="/grade-math/grade-person-icon.svg" alt='' width={20} height={20}  />
             <h3 className='text-[#5C7069] text-[12px] font-medium'>Today’s Attendance</h3>
@@ -71,8 +71,8 @@ const DetailsGrade = () => {
             <h3 className='text-[#000000] text-[12px] font-medium'>28 students | 2 absent</h3>
             <MdOutlineKeyboardArrowRight className='text-[20px]'  />
          </div>
-       </div>
-       <div className='card w-full bg-[#F6F7F7] border-[1px] border-[#E1E6E4] rounded-[8px] py-3 px-2 flex justify-between mb-[6px]'> 
+       </div> */}
+       {/* <div className='card w-full bg-[#F6F7F7] border-[1px] border-[#E1E6E4] rounded-[8px] py-3 px-2 flex justify-between mb-[6px]'> 
          <div className='flex items-center gap-2'>
          <Image src="/grade-math/grade-notif-icon.svg" alt='' width={20} height={20}  />
             <h3 className='text-[#5C7069] text-[12px] font-medium'>Certificates Needed</h3>
@@ -93,7 +93,7 @@ const DetailsGrade = () => {
             <h3 className='text-[#000000] text-[12px] font-medium'>1 unread from parents</h3>
             <MdOutlineKeyboardArrowRight className='text-[20px]'  />
          </div>
-       </div>
+       </div> */}
     </div>
     <div className='w-full bg-[#E1E6E4] rounded-t-[24px] py-5 px-5'>
     <div className="search-bar relative">

@@ -1,69 +1,31 @@
 "use client"
 import React, { useState } from "react";
-import { FiSearch } from "react-icons/fi";
 import { MdOutlineCancel, MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
 import { BiCheckDouble } from "react-icons/bi";
 import { FiTrash2 } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa6";
-import Image from "next/image";
 import { RiChat3Line } from "react-icons/ri";
 import { BiPhoneCall } from "react-icons/bi";
 import { CgLoadbar } from "react-icons/cg";
 import { MdArrowBackIos } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
-
-const SingleGradeTabContent = () => {
-  const [selectedCard, setSelectedCard] = useState(null); // State for the selected card
-
-  const students = [
-    {
-      id: 1,
-      initials: "SK",
-      name: "Sarah Khalid",
-      status: "No certificates",
-      statusIcon: <MdOutlineCancel className="text-[#C7110E] text-[18px]" />,
-    },
-    {
-      id: 2,
-      initials: "JK",
-      name: "John Kim",
-      status: "Certificate pending",
-      statusIcon: (
-        <span className="flex justify-center items-center w-[13px] h-[13px] rounded-full border-[1px] border-[#2C8D38]">
-          <TiTick className="text-[#2C8D38] text-[18px]" />
-        </span>
-      ),
-    },
-    {
-      id: 3,
-      initials: "SK",
-      name: "Sarah Khalid",
-      status: "No certificates",
-      statusIcon: <MdOutlineCancel className="text-[#C7110E] text-[18px]" />,
-    },
-    {
-      id: 4,
-      initials: "JK",
-      name: "John Kim",
-      status: "Certificate pending",
-      statusIcon: (
-        <span className="flex justify-center items-center w-[13px] h-[13px] rounded-full border-[1px] border-[#2C8D38]">
-          <TiTick className="text-[#2C8D38] text-[18px]" />
-        </span>
-      ),
-    },
- 
-  ];
+import { MdOutlineFileUpload } from "react-icons/md";
+const SingleGradeTabContent = ({students}) => {
+  console.log(students,"datata")
+  const [selectedCard, setSelectedCard] = useState(null); 
+  const [popupVisible, setPopupVisible] = useState(false); 
+  // const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState([]);
+  console.log(selectedStudent)
+  const data=students
 
   const handleCardClick = (student) => {
     setSelectedCard(student);
   };
-
   const closePopup = () => {
     setSelectedCard(null);
   };
-
   const [currentDate, setCurrentDate] = useState(new Date());
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -85,67 +47,114 @@ const SingleGradeTabContent = () => {
     const newDate = new Date(year, month - 1);
     setCurrentDate(newDate);
   };
-
   const handleNextMonth = () => {
     const newDate = new Date(year, month + 1);
     setCurrentDate(newDate);
   };
+  const handleViewStudent = () => {
+    // setSelectedStudent(student); // Set the selected student
+    setPopupVisible(true); 
+  };
 
+  const closePop = () => {
+    setPopupVisible(false); 
+    setSelectedStudent(null); 
+  };
+
+  const handleCheckboxChange = (student) => {
+    setSelectedStudent((prev) => {
+      const isStudentSelected = prev.some((s) => s.id === student.id);
+      if (isStudentSelected) {
+        return prev.filter((s) => s.id !== student.id);
+      } else {
+        sendStudentToAPI(student); 
+      return [...prev, student];
+      }
+    });
+  };
+  
+  const sendStudentToAPI = async (student) => {
+    console.log(student,"dentttss")
+    try {
+      const response = await fetch("http://localhost:8000/class/add_student", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ classId: student._id }), // Send student ID to the API
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to send student data");
+      }
+  
+      const result = await response.json();
+      console.log("addededddddddddd successfully:", result);
+    } catch (error) {
+      console.error("Error sending student data:", error.message);
+      alert("There was an error sending the student data. Please try again.");
+    }
+  };
+    // useEffect(()=>{
+    //   handlegetStudent()
+    // },[])
+  
+  const addStudent = [
+    { id: 1, full_name: "Adil Nisar", initials: "AD" },
+    { id: 2, full_name: "Sara Khan", initials: "SK" },
+  ];
   return (
     <>
       <div className="w-full pb-10">
-  
-
         <div className="w-full mt-[16px]">
-          {students.map((student) => (
+          {data.map((student,i) => (
             <div
-              key={student.id}
+              key={i}
               className="card mb-[16px] w-full flex justify-between items-center cursor-pointer"
               onClick={() => handleCardClick(student)} 
             >
               <div className="flex gap-4">
-                <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4]">
-                  {student.initials}
+                <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
+                  { student.full_name.split(" ").map(name => name.charAt(0)).join(" ")}
                 </div>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-[#000000] text-[16px] font-medium">
-                      {student.name}
+                    <h2 className="text-[#000000] text-[16px] font-medium capitalize">
+                      {student.full_name}
                     </h2>
                     <span>{student.statusIcon}</span>
                   </div>
-                  <span className="text-[#768B82] text-[12px] font-normal">
-                    {student.status}
-                  </span>
+                
                 </div>
               </div>
               <MdOutlineKeyboardArrowRight className="text-[#C2CDC8] text-[24px]" />
             </div>
           ))}
-        </div>
-       
+         
+        </div>     
       </div>
       <div className="w-full flex justify-between relative bottom-0">
           <div className="w-[40px] h-[40px] border-[1px] border-[#FFC6C5] rounded-[8px] border-dotted flex justify-center items-center">
             <FiTrash2 className="text-[#C7110E] text-[18px]" />
           </div>
           <div className="w-[80%] h-[40px] bg-[#F6F7F7] border-[1px] border-dotted rounded-[8px] border-[#C2CDC8] flex justify-center items-center">
-            <h3 className="flex items-center gap-1 text-[#171C1B] text-[16px] font-medium">
+            <h3 className="flex items-center gap-1 text-[#171C1B] text-[16px] font-medium" onClick={()=>handleViewStudent()}>
               <FaPlus />
               New
             </h3>
           </div>
         </div>
+     
         {selectedCard && (
-          <div className="fixed  inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50">
-            <div className="bg-white w-[100%] px-6 rounded-t-[24px] shadow-lg ">
+          <div className="fixed  inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50" onClick={closePopup}>
+            <div className="bg-white w-[100%] px-6 rounded-t-[24px] shadow-lg " onClick={(e) => e.stopPropagation()}>
               <div className="flex justify-center py-2"><CgLoadbar  className="text-[#C2CDC8] text-[24px]" /> </div>
             <div className='w-full user flex items-center gap-3 mt-[12px]'>
             <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4]">
                   {selectedCard.initials}
                 </div>
         <div>
-        <h2 className='text-[#171C1B] text-[18px] font-medium '>{selectedCard.name}</h2>
+        <h2 className='text-[#171C1B] text-[18px] font-medium capitalize'>{selectedCard.full_name}</h2>
         <span className='text-[12px] text-[#485952] font-medium'>Parent</span>
         </div>
       
@@ -163,7 +172,7 @@ const SingleGradeTabContent = () => {
             </div>
             </div>
             </div>
-            <div className="records w-full mt-[12px]"> 
+            {/* <div className="records w-full mt-[12px]"> 
               <div className="w-full border-[1px] border-[#E1E6E4] rounded-[8px] py-3 mb-[6px] flex items-center justify-between px-3"> 
               <h4 className="text-[#485952] text-[14px] font-normal ">Attendance Today</h4>
               <span className="flex items-center gap-2 text-[#000000] text-[14px] font-normal"><MdOutlineCancel className="text-[#C7110E] text-[18px]"/>Absent</span>
@@ -176,7 +185,7 @@ const SingleGradeTabContent = () => {
               <h4 className="text-[#485952] text-[14px] font-normal ">Certificates Uploaded</h4>
               <span className="flex items-center gap-2 text-[#2C8D38] text-[14px] font-medium">None</span>
               </div>
-            </div>
+            </div> */}
             <div className="Date-picker w-full"> 
             <div className="p-4 max-w-md mx-auto">
       {/* Header */}
@@ -227,17 +236,58 @@ const SingleGradeTabContent = () => {
            
 
             </div>
-              <div className="mt-4 flex justify-end">
+              <div className="my-4 w-full">
                 <button
                   onClick={closePopup}
-                  className="px-4 py-2 bg-[#C2CDC8] text-white rounded-[8px]"
+                  className="flex items-center justify-center gap-2 w-full py-2 bg-[#262626] text-white rounded-[8px]"
                 >
-                  Close
+                <MdOutlineFileUpload className="text-[24px]" />  Upload Certificate
                 </button>
               </div>
             </div>
           </div>
         )}
+   {popupVisible && (
+  <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white rounded-lg p-6 w-[90%] max-w-md">
+      <h2 className="text-lg font-bold mb-4">Student Details</h2>
+      <div className="w-full mt-[16px]">
+        {addStudent.map((student) => (
+          <div
+            key={student.id}
+            className="card mb-[16px] w-full flex justify-between items-center cursor-pointer"
+          >
+            <div className="flex gap-4">
+              <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
+                {student.initials}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-[#000000] text-[16px] font-medium capitalize">
+                    {student.full_name}
+                  </h2>
+                </div>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              onChange={() => handleCheckboxChange(student)}
+              checked={(selectedStudent || []).some((s) => s.id === student.id)}
+
+            />
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={closePop}
+        className="mt-4 w-full py-2 bg-blue-500 text-white rounded"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
     </>
   );
 };

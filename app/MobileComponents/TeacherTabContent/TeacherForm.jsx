@@ -19,7 +19,6 @@ const TeacherForm = () => {
     initialValues:initialValues,
     onSubmit:(values,{resetForm})=>{
       console.log(values)
-     
       resetForm()
     }
   })
