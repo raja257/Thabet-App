@@ -10,8 +10,8 @@ const SingleGrade = () => {
     console.log(students,"fetch students")
     const params = useParams();
     const gradeName = params.singlegrade?.[0]; 
-    console.log(gradeName,"main iddd")
     const _id=gradeName
+    console.log(_id,"main iddd")
     const handlegetStudent = async () => {
     try {
     const response = await fetch("http://localhost:8000/class/get_student", {
@@ -27,10 +27,10 @@ const SingleGrade = () => {
           }
   
           const result = await response.json();
-          console.log("student get  successfully:", result);
+          console.log("student gettttt  successfully:", result.data);
           setStudents(result.data)
         } catch (error) {
-          console.error("Error saving grade:", error.message);
+          console.log("Error saving grade:", error.message);
           alert("There was an error saving the grade. Please try again.");
         }
       } 
@@ -48,7 +48,7 @@ const SingleGrade = () => {
     </div>
     
         <div className="mt-4 p-4">
-        <SingleGradeTabContent students={students} />
+        <SingleGradeTabContent students={students} _id={_id} />
          
         </div>
     </>

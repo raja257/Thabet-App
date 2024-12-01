@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineCancel, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { BiCheckDouble } from "react-icons/bi";
 import { FiTrash2 } from "react-icons/fi";
@@ -10,14 +10,27 @@ import { CgLoadbar } from "react-icons/cg";
 import { MdArrowBackIos } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
 import { MdOutlineFileUpload } from "react-icons/md";
-const SingleGradeTabContent = ({students}) => {
-  console.log(students,"datata")
+const SingleGradeTabContent = ({students,_id}) => {
+  console.log(_id,"datata")
   const [selectedCard, setSelectedCard] = useState(null); 
   const [popupVisible, setPopupVisible] = useState(false); 
   // const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState([]);
   console.log(selectedStudent)
+
+//   const [userData, setUserData] = useState(null);
+//   console.log(userData,"profile roles")
+//   const id=userData?._id
+//   console.log(id,"students")
+//   useEffect(() => {
+//     const data =JSON.parse(localStorage.getItem("userData")) ;
+//  if (data) {
+//       setUserData(data); 
+//     } 
+//   }, []);
+
+
   const data=students
 
   const handleCardClick = (student) => {
@@ -61,27 +74,29 @@ const SingleGradeTabContent = ({students}) => {
     setSelectedStudent(null); 
   };
 
-  const handleCheckboxChange = (student) => {
+  const handleCheckboxToggle = (id) => {
     setSelectedStudent((prev) => {
-      const isStudentSelected = prev.some((s) => s.id === student.id);
-      if (isStudentSelected) {
-        return prev.filter((s) => s.id !== student.id);
+      if (prev.includes(id)) {
+        return prev.filter((studentId) => studentId !== id); 
       } else {
-        sendStudentToAPI(student); 
-      return [...prev, student];
+        return [...prev, id]; 
       }
     });
   };
   
-  const sendStudentToAPI = async (student) => {
-    console.log(student,"dentttss")
+  const handleSubmit = async () => {
+    if (selectedStudent.length === 0) {
+      alert("Please select at least one student to add.");
+      return;
+    }
+  
     try {
       const response = await fetch("http://localhost:8000/class/add_student", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ classId: student._id }), // Send student ID to the API
+        body: JSON.stringify({ classId: _id, newStudentsIds: selectedStudent }), 
       });
   
       if (!response.ok) {
@@ -89,20 +104,33 @@ const SingleGradeTabContent = ({students}) => {
       }
   
       const result = await response.json();
-      console.log("addededddddddddd successfully:", result);
+      console.log("Students added successfully:", result);
+      alert("Students added successfully!");
+      setSelectedStudent([]); // Clear selected students after successful submission
+      closePop(); // Close popup
     } catch (error) {
-      console.error("Error sending student data:", error.message);
+      console.log("Error sending student data:", error.message);
       alert("There was an error sending the student data. Please try again.");
     }
   };
+  
     // useEffect(()=>{
     //   handlegetStudent()
     // },[])
-  
-  const addStudent = [
-    { id: 1, full_name: "Adil Nisar", initials: "AD" },
-    { id: 2, full_name: "Sara Khan", initials: "SK" },
-  ];
+  const [addStudent,setAddStudent]=useState([])
+  // const addStudent = [
+  //   { id: 1, full_name: "Adil Nisar", initials: "AD" },
+  //   { id: 2, full_name: "Sara Khan", initials: "SK" },
+  // ];
+  const fetchStudent=async()=>{
+    const response=await fetch("http://localhost:8000/user/get_students")
+    const data=await response.json()
+    console.log(data.students,"apii fetch")
+    setAddStudent(data.students)
+  }
+  useEffect(()=>{
+    fetchStudent()
+  },[])
   return (
     <>
       <div className="w-full pb-10">
@@ -159,7 +187,7 @@ const SingleGradeTabContent = ({students}) => {
         </div>
       
             </div> 
-            <div className="parent-contact w-full mt-1" >  
+            {/* <div className="parent-contact w-full mt-1" >  
             <span className="text-[#768B82] text-[12px] font-medium">Parent Contact</span>
             <div className="w-full flex justify-between"> 
             <div> 
@@ -171,7 +199,7 @@ const SingleGradeTabContent = ({students}) => {
               <button className="flex justify-center items-center w-[44px] h-[44px] rounded-[8px] bg-[#E5283F]"><BiPhoneCall className="text-[#ffff] text-[20px]" /></button>
             </div>
             </div>
-            </div>
+            </div> */}
             {/* <div className="records w-full mt-[12px]"> 
               <div className="w-full border-[1px] border-[#E1E6E4] rounded-[8px] py-3 mb-[6px] flex items-center justify-between px-3"> 
               <h4 className="text-[#485952] text-[14px] font-normal ">Attendance Today</h4>
@@ -247,14 +275,14 @@ const SingleGradeTabContent = ({students}) => {
             </div>
           </div>
         )}
-   {popupVisible && (
+  {popupVisible && (
   <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div className="bg-white rounded-lg p-6 w-[90%] max-w-md">
       <h2 className="text-lg font-bold mb-4">Student Details</h2>
       <div className="w-full mt-[16px]">
         {addStudent.map((student) => (
           <div
-            key={student.id}
+            key={student._id}
             className="card mb-[16px] w-full flex justify-between items-center cursor-pointer"
           >
             <div className="flex gap-4">
@@ -264,29 +292,35 @@ const SingleGradeTabContent = ({students}) => {
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">
                   <h2 className="text-[#000000] text-[16px] font-medium capitalize">
-                    {student.full_name}
+                    {student.name}
                   </h2>
                 </div>
               </div>
             </div>
             <input
               type="checkbox"
-              onChange={() => handleCheckboxChange(student)}
-              checked={(selectedStudent || []).some((s) => s.id === student.id)}
-
-            />
+              onChange={() => handleCheckboxToggle(student._id)}
+              checked={Array.isArray(selectedStudent) && selectedStudent.includes(student._id)}
+              />
           </div>
         ))}
       </div>
       <button
+        onClick={handleSubmit}
+        className="mt-4 w-full py-2 bg-green-500 text-white rounded"
+      >
+        Submit
+      </button>
+      <button
         onClick={closePop}
-        className="mt-4 w-full py-2 bg-blue-500 text-white rounded"
+        className="mt-2 w-full py-2 bg-blue-500 text-white rounded"
       >
         Close
       </button>
     </div>
   </div>
 )}
+
 
     </>
   );

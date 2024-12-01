@@ -4,14 +4,16 @@ import React,{useState} from 'react'
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import { useFormik } from 'formik';
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from 'next/navigation';
 const initialValues={
   email:"",
   password:""
 }
 const TeacherForm = () => {
     const [password,setPassword] =useState(false)
- 
+   const router=useRouter()
   const handlePassword=()=>{
      setPassword(!password)
   }
@@ -24,28 +26,41 @@ const TeacherForm = () => {
   })
   const handleAdd = async (data) => {
     try {
-    const response = await fetch("http://localhost:8000/user/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-  
-          if (!response.ok) {
-            throw new Error("Failed to save grade");
-          }
-  
-          const result = await response.json();
-          console.log("student get  successfully:", result);
-          setStudents(result.data)
-        } catch (error) {
-          console.log("Error saving grade:", error.message);
-          alert("There was an error saving the grade. Please try again.");
+      const response = await fetch("http://localhost:8000/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid email or password");
+      }
+
+      const result = await response.json();
+      const storedToken = localStorage.getItem("token");
+
+      if (storedToken) {
+        const storedData = JSON.parse(localStorage.getItem("userData"));
+
+        if (storedData.email === data.email) {
+          localStorage.setItem("token", result.token); // Update token
+          router.push("/profile"); // Redirect to profile page
+        } else {
+          toast.error("Invalid email or password");
         }
-      } 
+      } else {
+        toast.error("No user found. Please sign up first.");
+      }
+    } catch (error) {
+      toast.error(error.message || "There was an error. Please try again.");
+    }
+  };
+
   return (
     <>
+    <ToastContainer />
     <div className='w-full'>
         <div className='flex gap-5'>
             <Image src="/welcome-page/welcome-screen-teacher.svg" alt="" width={30} height={30} className='' />

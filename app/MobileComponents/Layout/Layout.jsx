@@ -7,9 +7,12 @@ import User from "@/app/Components/User";
 const Layout = ({ children }) => {
   return (
     <>
+    <ProtectedRoute>
          <User>
           <main className="mb-24">{children}</main>
          </User>
+
+    </ProtectedRoute>
       <Header />
     </>
   );
