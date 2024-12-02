@@ -22,7 +22,7 @@ const Grade = () => {
       setTimeout(()=>{
         fetchGrade(data._id);
         setNewGrade({ class_name: "", subjects: [] ,teacher_id:data._id});
-      },[3000])
+      },[2000])
     } 
   }, []);
 
@@ -85,7 +85,8 @@ const Grade = () => {
           throw new Error("Failed to save grade");
         }
         const result = await response.json();
-        setGrades([...grades, newGrade]);
+        // setGrades([...grades, newGrade]);
+        fetchGrade(teacher_id)
         setNewGrade({ class_name: "", subjects: [] });
         setShowPopup(false);
 

@@ -10,7 +10,7 @@ import { CgLoadbar } from "react-icons/cg";
 import { MdArrowBackIos } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
 import { MdOutlineFileUpload } from "react-icons/md";
-const SingleGradeTabContent = ({students,_id}) => {
+const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
   console.log(_id,"datata")
   const [selectedCard, setSelectedCard] = useState(null); 
   const [popupVisible, setPopupVisible] = useState(false); 
@@ -106,6 +106,7 @@ const SingleGradeTabContent = ({students,_id}) => {
       const result = await response.json();
       console.log("Students added successfully:", result);
       alert("Students added successfully!");
+      handlegetStudent()
       setSelectedStudent([]); // Clear selected students after successful submission
       closePop(); // Close popup
     } catch (error) {

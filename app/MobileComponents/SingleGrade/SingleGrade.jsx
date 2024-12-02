@@ -48,7 +48,7 @@ const SingleGrade = () => {
     </div>
     
         <div className="mt-4 p-4">
-        <SingleGradeTabContent students={students} _id={_id} />
+        <SingleGradeTabContent students={students} _id={_id} handlegetStudent={handlegetStudent} />
          
         </div>
     </>

@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Link from "next/link";
 
 const initialValues = {
   email: "",
@@ -128,9 +129,12 @@ const ParentForm = () => {
                         Remember me
                       </p>
                     </div>
+                    <Link href="/signup">
                     <span className="font-medium text-[#2C8D38] text-[12px]">
                       Create an account
                     </span>
+                    
+                    </Link>
                   </div>
                   <div className="w-full 2xl:mt-[24px] mt-[16px]">
                     <button

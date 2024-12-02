@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Signup from "../SignupForm/Signup";
+import Welcome from "../Welcome/Welcome";
 const ProtectedRoute = ({ children }) => {
   const [token, setToken] = useState(null);
   const router = useRouter();
@@ -9,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
     const checkToken = () => {
       const storedToken = localStorage.getItem("token");
       if (!storedToken) {
-        router.push("/signup");
+        router.push("/welcome");
       } else {
         setToken(storedToken);
       }
@@ -21,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
     };
   }, []);
   if (!token) {
-    return  <Signup />;
+    return  <Welcome />;
   }
   return token ? <>{children}</> : null;
 };

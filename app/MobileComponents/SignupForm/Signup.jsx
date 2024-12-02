@@ -24,7 +24,7 @@ const Signup = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         await createUser(values);
-        router.push("/welcome");
+        router.push("/profile");
         resetForm();
       } catch (error) {
         console.error("Signup failed:", error.message);

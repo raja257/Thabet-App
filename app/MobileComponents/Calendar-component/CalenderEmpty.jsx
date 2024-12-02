@@ -25,7 +25,7 @@ const CalenderEmpty = () => {
   const [end_date, setEndDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
+  const [sub_title, setSubtitle] = useState("");
   const [events, setEvents] = useState([]);
   const handleAddEvent = () => setIsPopupOpen(true);
   const [userData, setUserData] = useState(null);
@@ -50,7 +50,7 @@ const CalenderEmpty = () => {
   const handleSubmit = () => {
     if (
       !title ||
-      !subtitle ||
+      !sub_title ||
       !start_time ||
       !end_time ||
       !start_date ||
@@ -62,7 +62,7 @@ const CalenderEmpty = () => {
 
     const newEvent = {
       title,
-      subtitle,
+      sub_title,
       start_time,
       end_time,
       start_date: start_date.toISOString().split('T')[0], 
@@ -74,14 +74,15 @@ const CalenderEmpty = () => {
   };
 
   const addCalenderData = async (data, _id) => {
+    data.teacher_id=_id
     const response = await fetch(
       "http://localhost:8000/calender/create_calender",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type":"application/json",
         },
-        body: JSON.stringify({ data, teacher_id: _id }),
+        body: JSON.stringify(data),
       }
     );
     const res = await response.json();
@@ -180,7 +181,7 @@ const CalenderEmpty = () => {
                   {event.title}
                 </h2>
                 <p className="pt-2 text-[#171C1B] text-[12px] font-normal">
-                  {event.subtitle}
+                  {event.sub_title}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
               <span className="text-[#485952] text-[14px] font-medium">
@@ -230,10 +231,10 @@ const CalenderEmpty = () => {
                 className="border p-2 w-full rounded"
               />
 
-              <label className="block font-medium mt-4 mb-2">Subtitle</label>
+              <label className="block font-medium mt-4 mb-2">sub_title</label>
               <input
                 type="text"
-                value={subtitle}
+                value={sub_title}
                 onChange={(e) => setSubtitle(e.target.value)}
                 className="border p-2 w-full rounded"
               />

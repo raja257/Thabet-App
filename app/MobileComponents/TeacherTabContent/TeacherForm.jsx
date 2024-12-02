@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 const initialValues={
   email:"",
   password:""
@@ -97,8 +98,10 @@ const TeacherForm = () => {
           <input type="checkbox"  />
             <p className="text-[12px] text-[#5C7069] font-normal">Remember me</p>
           </div>
-         
+         <Link href="/signup">
            <span className="font-medium text-[#2C8D38] text-[12px]">Create an account</span>  
+         
+         </Link>
       
          
         </div>
