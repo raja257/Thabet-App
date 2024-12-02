@@ -9,7 +9,6 @@ import { useSearchParams } from "next/navigation";
 const FormTabs = () => {
   const [activeTab, setActiveTab] = useState("teacher");
   const searchParams = useSearchParams();
-
   useEffect(() => {
     const tab = searchParams.get("tab");
     console.log(tab)

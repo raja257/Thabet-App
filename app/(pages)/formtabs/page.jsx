@@ -1,12 +1,14 @@
-import FormTabs from '@/app/MobileComponents/FormTabs/FormTabs'
-import React from 'react'
+import React, { Suspense } from "react";
+import FormTabs from "@/app/MobileComponents/FormTabs/FormTabs";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
+      <Suspense fallback={<div>Loading...</div>}>
         <FormTabs />
+      </Suspense>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;
