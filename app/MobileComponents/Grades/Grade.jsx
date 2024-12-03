@@ -156,7 +156,7 @@ const Grade = () => {
                 type="text"
                 placeholder="Grade Name (e.g., Grade 9)"
                 className="w-full p-2 mb-3 border rounded"
-                value={newGrade.class_name}
+                value={newGrade?.class_name}
                 onChange={(e) =>
                   setNewGrade({ ...newGrade, class_name: e.target.value })
                 }
@@ -189,7 +189,7 @@ const Grade = () => {
                 </button>
               </div>
               <div className="flex flex-wrap gap-2 mb-3">
-                {newGrade.subjects.map((subject, index) => (
+                {newGrade?.subjects?.map((subject, index) => (
                   <span
                     key={index}
                     className="bg-gray-200 text-sm px-2 py-1 rounded"

@@ -13,16 +13,11 @@ const Profile = () => {
   console.log(userData,"profile roles")
   const name = `${userData?.first_name || ''} ${userData?.last_name || ''}`.trim();
   const role = userData?.role;
-  const id="6746c1a851a6b86a7ef7655d"
+  const id=userData?._id
   const [child,setChild]=useState([])
-  useEffect(() => {
-    const data = localStorage.getItem("userData");
- if (data) {
-      setUserData(JSON.parse(data)); 
-    }
-  }, []);
-  const teacher_id = id;
-  const handleGetPeriods = async () => {
+  
+  let teacher_id = id;
+  const handleGetPeriods = async (teacher_id) => {
     try {
       const response = await fetch("http://localhost:8000/class/get_periods", {
         method: "POST",
@@ -43,17 +38,26 @@ const Profile = () => {
     }
   };
   useEffect(() => {
-    handleGetPeriods();
-    handleGetchild()
+    const data =JSON.parse(localStorage.getItem("userData")) ;
+ if (data) {
+      setUserData(data); 
+      setTimeout(()=>{
+        if(data.role=="teacher"){
+          handleGetPeriods(data._id);
+        }else if(data.role=="parent"){
+          handleGetchild(data._id)
+        }
+      },[2000])
+    }
   }, []);
-  const handleGetchild = async () => {
+  const handleGetchild = async (_id) => {
     try {
       const response = await fetch("http://localhost:8000/user/get_child", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _id:id }),
+        body: JSON.stringify({ _id }),
       });
 
       if (!response.ok) {
@@ -155,7 +159,6 @@ const Profile = () => {
         <p className="text-[#3C4945] text-[12px] font-normal">
           Today - Thu, 07 November
         </p>
-
         {cardsData.map((card, index) => (
           <div className="w-full mt-[8px] card" key={index}>
             <div className="flex items-center gap-3">
@@ -185,21 +188,8 @@ const Profile = () => {
                   {card.subject}
                 </h1>
 
-                <div className="flex justify-between mt-[8px]">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src="/Profile/profile-card-room.svg"
-                      alt=""
-                      width={20}
-                      height={20}
-                    />
-                    <h3 className="text-[#485952] text-[12px] font-normal">
-                      Room{" "}
-                      <span className="text-[#485952] text-[14px] font-medium">
-                        {card.room}
-                      </span>
-                    </h3>
-                  </div>
+                <div className="flex justify-end mt-[8px]">
+                  
                   <div className="flex items-center gap-2">
                     <Image
                       src="/Profile/profile-card-person.svg"

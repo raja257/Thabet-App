@@ -99,11 +99,8 @@ const TeacherForm = () => {
             <p className="text-[12px] text-[#5C7069] font-normal">Remember me</p>
           </div>
          <Link href="/signup">
-           <span className="font-medium text-[#2C8D38] text-[12px]">Create an account</span>  
-         
-         </Link>
-      
-         
+           <span className="font-medium text-[#2C8D38] text-[12px]">Create an account</span>   
+         </Link>   
         </div>
         <div className="w-full 2xl:mt-[24px] mt-[16px]">
          <button className="xl:w-[80%] w-[100%] h-[48px] bg-[#2C8D38] text-[#FFFFFF] text-[16px] font-medium rounded-[12px]" type='submit'>

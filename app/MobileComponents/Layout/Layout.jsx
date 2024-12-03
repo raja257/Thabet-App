@@ -6,8 +6,11 @@ import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import User from "@/app/Components/User";
 const Layout = ({ children }) => {
   const pathname = usePathname();
-  const unprotectedRoutes = ["/formtabs","/signup"];
+  const unprotectedRoutes = ["/formtabs", "/signup", "/welcome"];
   const isProtected = !unprotectedRoutes.includes(pathname);
+  const hideHeaderRoutes = ["/signup", "/welcome", "/formtabs"];
+  const showHeader = !hideHeaderRoutes.includes(pathname);
+
   return (
     <>
       {isProtected ? (
@@ -19,7 +22,7 @@ const Layout = ({ children }) => {
       ) : (
         <main className="mb-24">{children}</main>
       )}
-      <Header />
+      {showHeader && <Header />}
     </>
   );
 };

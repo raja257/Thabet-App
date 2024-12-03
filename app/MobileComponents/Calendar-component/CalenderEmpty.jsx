@@ -8,6 +8,7 @@ import { FaRegClock } from "react-icons/fa";
 
 const CalenderEmpty = () => {
   const [selectedDay, setSelectedDay] = useState(3);
+  console.log(selectedDate)
   const days = Array.from({ length: 30 }, (_, i) => i + 1);
   const [currentDate, setCurrentDate] = useState(new Date());
   const year = currentDate.getFullYear();
@@ -72,6 +73,22 @@ const CalenderEmpty = () => {
     addCalenderData(newEvent,_id);
     handlePopupClose();
   };
+  const fetchCalenderData = async (data, _id) => {
+    data._id=_id
+    const response = await fetch(
+      "http://localhost:8000/calender/get_calender",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const res = await response.json();
+    console.log(res, "calenderData");
+    return res;
+  };
 
   const addCalenderData = async (data, _id) => {
     data.teacher_id=_id
@@ -90,15 +107,15 @@ const CalenderEmpty = () => {
     return res;
   };
 
-  const fetchCalenderData=async(start_date,_id)=>{
-    const response=await fetch(`http://localhost:8000/calender/get_calender?_id=${_id}&date=${start_date}`)
-    const res=await response.json()
-    console.log(res,"calenderData Get")
-    return res
-  }
+  // const fetchCalenderData=async()=>{
+  //   const response=await fetch(`http://localhost:8000/calender/get_calender`)
+  //   const res=await response.json()
+  //   console.log(res,"calenderData Get")
+  //   return res
+  // }
   useEffect(()=>{
-    fetchCalenderData(start_date,_id)
-  },[start_date,_id])
+    fetchCalenderData()
+  },[])
 
   return (
     <>
