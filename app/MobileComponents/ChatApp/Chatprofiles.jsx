@@ -4,6 +4,7 @@ import { FiSearch } from "react-icons/fi";
 import AllchatContent from './AllchatContent';
 import TeacherParents from './TeacherParents';
 import TeacherStudent from './TeacherStudent';
+import TeacherbyParentId from './TeacherbyParentId';
 const Chatprofiles = () => {
     const [activeTab, setActiveTab] = useState('teacher'); 
     const [userData, setUserData] = useState(null);
@@ -43,7 +44,11 @@ const Chatprofiles = () => {
                     ))}
                 </div>
                 <div className="mt-4 p-3">
-                    {activeTab === 'teacher' && <div className='w-full'><AllchatContent /></div>}
+                {activeTab === 'teacher' && (
+        <div className="w-full">
+            {role === 'parent' ? <TeacherbyParentId /> : <AllchatContent />}
+        </div>
+                   )}
                     {activeTab === 'Parent' && <div className='w-full'><TeacherParents /></div>}
                     {activeTab === 'Student' && <div className='w-full'><TeacherStudent /></div>}
                 </div>
