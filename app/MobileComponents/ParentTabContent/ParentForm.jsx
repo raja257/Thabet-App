@@ -69,7 +69,7 @@ const ParentForm = () => {
       <div className="w-full">
         <div className="flex gap-5">
           <Image
-            src="/welcome-page/welcome-screen-home.svg"
+            src="/welcome-page/welcome-screen-parent.svg"
             alt=""
             width={30}
             height={30}

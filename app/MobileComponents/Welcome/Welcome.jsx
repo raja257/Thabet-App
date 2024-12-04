@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 const Welcome = () => {
   const router = useRouter();
   const handleCardClick = (userType) => {
-    console.log(`Navigating to /formtabs with tab: ${userType}`)
+    console.log(`Navigating to /formtabs with tab: ${userType}`);
     router.push(`/formtabs?tab=${userType}`);
   };
   return (

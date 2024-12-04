@@ -4,18 +4,21 @@ import React, { useEffect, useState } from "react";
 import { FiBell } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import { FaPlus } from "react-icons/fa";
 const Profile = () => {
   const [studentperiod,setStudentPeriod]=useState([])
-  const [popupVisible, setPopupVisible] = useState(false); // Popup visibility state
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupVisiblechild, setPopupVisiblechild] = useState(false); 
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [periods, setPeriods] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  console.log(selectedStudents)
   const [userData, setUserData] = useState(null);
   console.log(userData,"profile roles")
   const name = `${userData?.first_name || ''} ${userData?.last_name || ''}`.trim();
   const role = userData?.role;
   const id=userData?._id
   const [child,setChild]=useState([])
-  
   let teacher_id = id;
   const handleGetPeriods = async (teacher_id) => {
     try {
@@ -96,8 +99,6 @@ const Profile = () => {
    const handleCertificate =(allstudents)=>{
     router.push(`/profile/${allstudents}`);
    }  
- 
-
   const getStudentPeriods=async(student_id)=>{
     console.log(student_id,"iiddddddddd")
     try {
@@ -122,13 +123,70 @@ const Profile = () => {
   }
   const handleViewStudent = (student) => {
     getStudentPeriods(student.id)
-    setSelectedStudent(student); // Set the selected student
-    setPopupVisible(true); // Show the popup
+    setSelectedStudent(student); 
+    setPopupVisible(true); 
   };
   const closePopup = () => {
-    setPopupVisible(false); // Close the popup
-    setSelectedStudent(null); // Clear the selected student
+    setPopupVisible(false); 
+    setSelectedStudent(null);
   };
+  const [addStudent,setAddStudent]=useState([])
+  const fetchStudent=async()=>{
+    const response=await fetch("http://localhost:8000/user/get_students")
+    const data=await response.json()
+    console.log(data.students,"apii fetch")
+    setAddStudent(data.students)
+  }
+  useEffect(()=>{
+    fetchStudent()
+  },[])
+  const handleAddChild = () => {
+  // setSelectedStudent(student); // Set the selected student
+    setPopupVisiblechild(true); 
+  };
+  const handleCheckboxToggle = (id) => {
+    setSelectedStudents((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((studentId) => studentId !== id); 
+      } else {
+        return [...prev, id]; 
+      }
+    });
+  };
+  const closePops = () => {
+    setPopupVisiblechild(false); 
+    setSelectedStudents(null); 
+  };
+  const handleSubmit = async () => {
+    if (selectedStudents.length === 0) {
+      alert("Please select at least one student to add.");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:8000/user/childrens", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ parent_id: id, student_ids: selectedStudents }), 
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to send student data");
+      }
+  
+      const result = await response.json();
+      console.log("Students added successfully:", result);
+      alert("Students added successfully!");
+      // handleGetchild()
+      setSelectedStudents([]); 
+      closePops(); 
+    } catch (error) {
+      console.log("Error sending student data:", error.message);
+      alert("There was an error sending the student data. Please try again.");
+    }
+  };
+  
   return (
     <>
       <div className="w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] py-5 px-5">
@@ -229,11 +287,12 @@ const Profile = () => {
     )}
 
     {(role === 'parent' ) && (
+      <>
       <div className="w-full py-[16px] px-5 parent">
-        <h2 className="text-[16px] text-[#000000] font-medium">Students</h2>
-        {students.map((student) => (
+        <h2 className="text-[16px] text-[#000000] font-medium">Childs</h2>
+        {students.map((student,index) => (
           <div
-            key={student._id}
+          key={index}
             className="border-[1px] border-[#E1E6E4] bg-[#FFFFFF] rounded-[12px] py-[8px] px-[8px] mt-[8px] card"
           >
             <div className="flex gap-4">
@@ -262,7 +321,20 @@ const Profile = () => {
           </div>
         ))}
       </div>
+      <div className="w-full flex justify-center mt-10">
+         
+         <div className="w-[80%] h-[40px] bg-[#F6F7F7] border-[1px] border-dotted rounded-[8px] border-[#C2CDC8] flex justify-center items-center">
+           <h3 className="flex items-center gap-1 text-[#171C1B] text-[16px] font-medium" onClick={()=>handleAddChild()}>
+             <FaPlus />
+            Add Child
+           </h3>
+         </div>
+       </div>
+      
+      </>
+     
     )}
+  
        </div>
    {/* Popup */}
    {popupVisible && (
@@ -329,8 +401,54 @@ const Profile = () => {
     </button>
   </div>
 </div>
-)}
+    )}
 
+    {/* Add Child */}
+    {popupVisiblechild && (
+  <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white rounded-lg p-6 w-[90%] max-w-md">
+      <h2 className="text-lg font-bold mb-4">Student Details</h2>
+      <div className="w-full mt-[16px]">
+        {addStudent.map((student,i) => (
+          <div
+            key={i}
+            className="card mb-[16px] w-full flex justify-between items-center cursor-pointer"
+          >
+            <div className="flex gap-4">
+              <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
+                {student.initials}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-[#000000] text-[16px] font-medium capitalize">
+                    {student.name}
+                  </h2>
+                </div>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              onChange={() => handleCheckboxToggle(student._id)}
+              checked={Array.isArray(selectedStudents) && selectedStudents.includes(student._id)}
+              />
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={handleSubmit}
+        className="mt-4 w-full py-2 bg-green-500 text-white rounded"
+      >
+        Submit
+      </button>
+      <button
+        onClick={closePops}
+        className="mt-2 w-full py-2 bg-blue-500 text-white rounded"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+      )}
 
     </>
   );

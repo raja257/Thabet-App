@@ -8,7 +8,6 @@ import { FaRegClock } from "react-icons/fa";
 
 const CalenderEmpty = () => {
   const [selectedDay, setSelectedDay] = useState(3);
-  console.log(selectedDate)
   const days = Array.from({ length: 30 }, (_, i) => i + 1);
   const [currentDate, setCurrentDate] = useState(new Date());
   const year = currentDate.getFullYear();

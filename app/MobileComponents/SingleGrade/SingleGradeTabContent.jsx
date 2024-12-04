@@ -29,10 +29,7 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
 //       setUserData(data); 
 //     } 
 //   }, []);
-
-
   const data=students
-
   const handleCardClick = (student) => {
     setSelectedCard(student);
   };
@@ -42,17 +39,12 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-
   const firstDayOfMonth = new Date(year, month, 1).getDay();
-
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
   const days = [];
   for (let i = 0; i < firstDayOfMonth; i++) {
-    days.push(""); 
-  }
+    days.push(""); }
   for (let i = 1; i <= daysInMonth; i++) {
     days.push(i.toString());
   }
@@ -68,12 +60,10 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
     // setSelectedStudent(student); // Set the selected student
     setPopupVisible(true); 
   };
-
   const closePop = () => {
     setPopupVisible(false); 
     setSelectedStudent(null); 
   };
-
   const handleCheckboxToggle = (id) => {
     setSelectedStudent((prev) => {
       if (prev.includes(id)) {
@@ -83,13 +73,11 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
       }
     });
   };
-  
   const handleSubmit = async () => {
     if (selectedStudent.length === 0) {
       alert("Please select at least one student to add.");
       return;
     }
-  
     try {
       const response = await fetch("http://localhost:8000/class/add_student", {
         method: "POST",
@@ -320,7 +308,7 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
       </button>
     </div>
   </div>
-)}
+      )}
 
 
     </>
