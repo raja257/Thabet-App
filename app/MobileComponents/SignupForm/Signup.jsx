@@ -27,7 +27,7 @@ const Signup = () => {
         router.push("/profile");
         resetForm();
       } catch (error) {
-        console.error("Signup failed:", error.message);
+        console.log("Signup failed:", error.message);
       }
     },
   });

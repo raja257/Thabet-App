@@ -146,10 +146,15 @@ const Profile = () => {
   };
   const handleCheckboxToggle = (id) => {
     setSelectedStudents((prev) => {
+      if (!prev) {
+        return []; // Set to empty array if prev is null
+      }
       if (prev.includes(id)) {
-        return prev.filter((studentId) => studentId !== id); 
+        // Remove id from the array
+        return prev.filter((studentId) => studentId !== id);
       } else {
-        return [...prev, id]; 
+        // Add id to the array
+        return [...prev, id];
       }
     });
   };
@@ -416,7 +421,7 @@ const Profile = () => {
           >
             <div className="flex gap-4">
               <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
-                {student.initials}
+              { student.name.split(" ").map(name => name.charAt(0)).join(" ")}
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">
