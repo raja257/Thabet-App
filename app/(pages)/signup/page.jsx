@@ -1,3 +1,4 @@
+"use client"
 import Signup from '@/app/MobileComponents/SignupForm/Signup'
 import React from 'react'
 

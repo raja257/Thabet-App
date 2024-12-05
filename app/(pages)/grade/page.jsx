@@ -1,3 +1,4 @@
+"use client"
 import Grade from '@/app/MobileComponents/Grades/Grade'
 import React from 'react'
 

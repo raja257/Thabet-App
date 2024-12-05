@@ -1,3 +1,4 @@
+"use client"
 import Profile from '@/app/MobileComponents/Profile/Profile'
 import React from 'react'
 

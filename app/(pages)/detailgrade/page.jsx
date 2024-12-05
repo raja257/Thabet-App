@@ -1,3 +1,4 @@
+"use client"
 import DetailsGrade from '@/app/MobileComponents/SingleGrade/DetailsGrade'
 import React from 'react'
 

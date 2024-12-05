@@ -1,3 +1,4 @@
+"use client"
 import React, { Suspense } from "react";
 import FormTabs from "@/app/MobileComponents/FormTabs/FormTabs";
 

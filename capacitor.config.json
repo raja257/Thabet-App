@@ -1,0 +1,13 @@
+{
+  "appId": "com.thabet.app",
+  "appName": "thabet-app",
+  "webDir": "out",
+  "bundledWebRuntime": false,
+  "android": {
+    "package": "com.thabet.app",    
+    "enableJetifier": true,         
+    "buildPath": "android",        
+    "minSdkVersion": 21,            
+    "targetSdkVersion": 30          
+  }
+}

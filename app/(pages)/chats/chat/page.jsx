@@ -1,3 +1,4 @@
+"use client"
 import ChatDetail from '@/app/MobileComponents/ChatApp/ChatDetail'
 import React from 'react'
 

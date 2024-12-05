@@ -1,3 +1,4 @@
+"use client"
 import CalenderEmpty from '@/app/MobileComponents/Calendar-component/CalenderEmpty'
 import React from 'react'
 

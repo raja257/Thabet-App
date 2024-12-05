@@ -1,3 +1,4 @@
+"use client"
 import SingleGrade from '@/app/MobileComponents/SingleGrade/SingleGrade'
 import React from 'react'
 const page = () => {

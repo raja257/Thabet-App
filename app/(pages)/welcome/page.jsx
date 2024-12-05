@@ -1,6 +1,6 @@
+"use client"
 import Welcome from '@/app/MobileComponents/Welcome/Welcome'
 import React from 'react'
-
 const page = () => {
   return (
     <div>
