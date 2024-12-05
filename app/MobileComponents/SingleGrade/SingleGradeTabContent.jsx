@@ -1,11 +1,8 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineCancel, MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { BiCheckDouble } from "react-icons/bi";
 import { FiTrash2 } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa6";
-import { RiChat3Line } from "react-icons/ri";
-import { BiPhoneCall } from "react-icons/bi";
 import { CgLoadbar } from "react-icons/cg";
 import { MdArrowBackIos } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
@@ -13,22 +10,17 @@ import { MdOutlineFileUpload } from "react-icons/md";
 const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
   console.log(_id,"datata")
   const [selectedCard, setSelectedCard] = useState(null); 
+  console.log(selectedCard,"selectedStudent")
   const [popupVisible, setPopupVisible] = useState(false); 
-  // const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState([]);
-  console.log(selectedStudent)
-
-//   const [userData, setUserData] = useState(null);
-//   console.log(userData,"profile roles")
-//   const id=userData?._id
-//   console.log(id,"students")
-//   useEffect(() => {
-//     const data =JSON.parse(localStorage.getItem("userData")) ;
-//  if (data) {
-//       setUserData(data); 
-//     } 
-//   }, []);
+  const [userData, setUserData] = useState(null);
+  console.log(userData,"profile roles")
+  const ids=userData?._id
+  useEffect(() => {
+    const data =JSON.parse(localStorage.getItem("userData")) ;
+ if (data) { setUserData(data); } 
+  }, []);
   const data=students
   const handleCardClick = (student) => {
     setSelectedCard(student);
@@ -102,15 +94,7 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
       alert("There was an error sending the student data. Please try again.");
     }
   };
-  
-    // useEffect(()=>{
-    //   handlegetStudent()
-    // },[])
   const [addStudent,setAddStudent]=useState([])
-  // const addStudent = [
-  //   { id: 1, full_name: "Adil Nisar", initials: "AD" },
-  //   { id: 2, full_name: "Sara Khan", initials: "SK" },
-  // ];
   const fetchStudent=async()=>{
     const response=await fetch("http://localhost:8000/user/get_students")
     const data=await response.json()
@@ -120,6 +104,122 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
   useEffect(()=>{
     fetchStudent()
   },[])
+  const [attendance, setAttendance] = useState([]);
+   console.log(attendance,"attendance")
+   const [getattendance,setGetAttendance] = useState([]);
+   console.log(getattendance,"getAttendance")
+const handleDateClick = (day) => {
+  if (day) {
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+      .toISOString()
+      .split("T")[0];
+    if (!attendance.includes(date)) {
+      setAttendance((prev) => [...prev, date]);
+    }
+    
+  }
+};
+//Api of Add Attendance function
+const addAttendanceFn = async () => {
+  for (const date of attendance) {
+    const body = {
+      student_id: selectedCard._id, 
+      date: date, 
+    };
+    try {
+      const response = await fetch("http://localhost:8000/user/add_attendance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add attendance");
+      }
+
+      const result = await response.json();
+      console.log("datte added successfully:", result);
+      fetchAttandance()
+    } catch (error) {
+      console.log(`Error adding attendance for date ${date}:`, error);
+    }
+  }
+  setAttendance([]);
+
+};
+const fetchAttandance=async()=>{
+  try {
+    const response = await fetch("http://localhost:8000/user/get_attendance", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ student_id: selectedCard._id}),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to save grade");
+          }
+  
+          const result = await response.json();
+          console.log("attannnnnnnn gettttt  successfully:", result.get_data);
+          setGetAttendance(result.get_data)
+
+          
+        } catch (error) {
+          console.log("Error saving grade:", error.message);
+          alert("There was an error saving the grade. Please try again.");
+        }
+}
+
+  const fileInputRef = useRef(null); 
+const [certificate, setCertificates] = useState([]);
+
+const handleFileUpload = (e) => {
+  const files = e.target.files;
+  const pdfFiles = Array.from(files).filter((file) => file.type === "application/pdf");
+
+  if (pdfFiles.length > 0) {
+    const certificatesToUpload = pdfFiles.map((file) => ({
+      name: file.name,
+    }));
+
+    // Update the certificates state with just the `name` property from each file
+    setCertificates((prevCertificates) => [...prevCertificates, ...certificatesToUpload.map(cert => cert.name)]);
+
+    uploadCertificate(certificatesToUpload.map(cert => cert.name)); // Pass only the names
+  } else {
+    alert("Please upload only PDF files.");
+  }
+};
+
+const uploadCertificate = async (data) => {
+  try {
+    const response = await fetch("http://localhost:8000/user/certificate_upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        student_id: selectedCard._id,
+        certificate: data, 
+        teacher_id: ids,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload certificate");
+    }
+
+    const result = await response.json();
+    console.log("Certificates uploaded successfully:", result);
+    fetchAttandance();
+  } catch (error) {
+    console.error("Error uploading certificates:", error);
+  }
+};
+
   return (
     <>
       <div className="w-full pb-10">
@@ -150,10 +250,8 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
          
         </div>     
       </div>
-      <div className="w-full flex justify-between relative bottom-0">
-          <div className="w-[40px] h-[40px] border-[1px] border-[#FFC6C5] rounded-[8px] border-dotted flex justify-center items-center">
-            <FiTrash2 className="text-[#C7110E] text-[18px]" />
-          </div>
+      <div className="w-full flex justify-center relative bottom-0">
+       
           <div className="w-[80%] h-[40px] bg-[#F6F7F7] border-[1px] border-dotted rounded-[8px] border-[#C2CDC8] flex justify-center items-center">
             <h3 className="flex items-center gap-1 text-[#171C1B] text-[16px] font-medium" onClick={()=>handleViewStudent()}>
               <FaPlus />
@@ -168,44 +266,14 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
               <div className="flex justify-center py-2"><CgLoadbar  className="text-[#C2CDC8] text-[24px]" /> </div>
             <div className='w-full user flex items-center gap-3 mt-[12px]'>
             <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4]">
-                  {selectedCard.initials}
+            { selectedCard.full_name.split(" ").map(name => name.charAt(0)).join(" ")}
                 </div>
         <div>
         <h2 className='text-[#171C1B] text-[18px] font-medium capitalize'>{selectedCard.full_name}</h2>
-        <span className='text-[12px] text-[#485952] font-medium'>Parent</span>
         </div>
-      
             </div> 
-            {/* <div className="parent-contact w-full mt-1" >  
-            <span className="text-[#768B82] text-[12px] font-medium">Parent Contact</span>
-            <div className="w-full flex justify-between"> 
-            <div> 
-              <h2 className="text-[18px] font-medium text-[#171C1B]">Amira Khalid</h2>
-              <span className="text-[#3C4945] text-[16px] font-medium">+971 50 123 4567</span>
-            </div>
-            <div className="flex gap-3"> 
-              <button className="flex justify-center items-center w-[44px] h-[44px] rounded-[8px] bg-[#262626]"><RiChat3Line className="text-[#ffff] text-[20px]" /></button>
-              <button className="flex justify-center items-center w-[44px] h-[44px] rounded-[8px] bg-[#E5283F]"><BiPhoneCall className="text-[#ffff] text-[20px]" /></button>
-            </div>
-            </div>
-            </div> */}
-            {/* <div className="records w-full mt-[12px]"> 
-              <div className="w-full border-[1px] border-[#E1E6E4] rounded-[8px] py-3 mb-[6px] flex items-center justify-between px-3"> 
-              <h4 className="text-[#485952] text-[14px] font-normal ">Attendance Today</h4>
-              <span className="flex items-center gap-2 text-[#000000] text-[14px] font-normal"><MdOutlineCancel className="text-[#C7110E] text-[18px]"/>Absent</span>
-              </div>
-              <div className="w-full border-[1px] border-[#E1E6E4] rounded-[8px] py-3 mb-[6px] flex items-center justify-between px-3"> 
-              <h4 className="text-[#485952] text-[14px] font-normal ">Total Attendance</h4>
-              <span className="flex items-center gap-2 text-[#2C8D38] text-[14px] font-medium">85%</span>
-              </div>
-              <div className="w-full border-[1px] border-[#E1E6E4] rounded-[8px] py-3 mb-[6px] flex items-center justify-between px-3"> 
-              <h4 className="text-[#485952] text-[14px] font-normal ">Certificates Uploaded</h4>
-              <span className="flex items-center gap-2 text-[#2C8D38] text-[14px] font-medium">None</span>
-              </div>
-            </div> */}
             <div className="Date-picker w-full"> 
             <div className="p-4 max-w-md mx-auto">
-      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={handlePrevMonth}
@@ -226,7 +294,6 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
           <span className=""><MdArrowForwardIos className="text-[#5C7069]" /></span>
         </button>
       </div>
-
       {/* Days of the Week */}
       <div className="grid grid-cols-7 text-center">
         {dayNames.map((day) => (
@@ -235,32 +302,70 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
           </div>
         ))}
       </div>
-
       {/* Calendar Days */}
       <div className="grid grid-cols-7 text-center gap-1 mt-2">
-        {days.map((day, index) => (
-          <div
-            key={index}
-            className={`w-full h-10 flex items-center justify-center ${
-              day ? "text-black" : "text-transparent"
-            }`}
-          >
-            <span className="text-sm font-medium">{day}</span>
-          </div>
-        ))}
+      {days.map((day, index) => {
+          const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+          .toISOString()
+          .split('T')[0];
+    
+        const isSelected = attendance.includes(date);
+        const isFetched = getattendance.some((fetchedDate) => fetchedDate === date);
+
+          return (
+            <div
+              key={index}
+              onClick={() => handleDateClick(day)}
+              className={`w-full h-10 flex items-center justify-center cursor-pointer rounded ${
+                day
+                  ? isSelected && isFetched
+                    ? 'bg-blue-500 text-white' // Both selected and fetched
+                    : isSelected
+                    ? 'bg-green-500 text-white' // Only selected
+                    : isFetched
+                    ? 'bg-blue-300 text-black' // Only fetched
+                    : 'text-black hover:bg-gray-200' // Neither selected nor fetched
+                  : 'text-transparent'
+              }`}
+            >
+              <span className="text-sm font-medium">{day}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
-           
 
+     <button
+      onClick={addAttendanceFn}
+      style={{
+        padding: "10px 20px",
+        backgroundColor: "#4CAF50",
+        color: "#fff",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer",
+        marginTop: "20px",
+      }}
+    >
+      Submit Attendance
+    </button>
             </div>
-              <div className="my-4 w-full">
-                <button
-                  onClick={closePopup}
-                  className="flex items-center justify-center gap-2 w-full py-2 bg-[#262626] text-white rounded-[8px]"
-                >
-                <MdOutlineFileUpload className="text-[24px]" />  Upload Certificate
-                </button>
-              </div>
+            <div className="my-4 w-full">
+      <button
+        onClick={() => fileInputRef.current.click()} // Use the ref to trigger the input
+        className="flex items-center justify-center gap-2 w-full py-2 bg-[#262626] text-white rounded-[8px]"
+      >
+        <MdOutlineFileUpload className="text-[24px]" /> Upload Certificate
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/pdf"
+        multiple
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+    </div>
             </div>
           </div>
         )}
@@ -276,7 +381,7 @@ const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
           >
             <div className="flex gap-4">
               <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
-                {student.initials}
+              { student.name.split(" ").map(name => name.charAt(0)).join(" ")}
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">

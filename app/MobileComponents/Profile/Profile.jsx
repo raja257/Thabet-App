@@ -178,7 +178,7 @@ const Profile = () => {
       const result = await response.json();
       console.log("Students added successfully:", result);
       alert("Students added successfully!");
-      // handleGetchild()
+      handleGetchild(id)
       setSelectedStudents([]); 
       closePops(); 
     } catch (error) {
