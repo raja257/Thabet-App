@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { BiPhoneCall } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -9,11 +9,16 @@ import { FiSend } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa6";
 
 const ChatDetail = () => {
-  const params = useParams();
-  const chatName = params.chat?.[0];
+  // const params = useParams();
+  const [reciever, setReciever] = useState('');
+
+  
+  console.log(reciever,"recieverrr")
+  const chatName = reciever;
   const other_user = chatName;
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  console.log(messages,"hello mesg")
   const [userData, setUserData] = useState(null);
   const [logged_in_user, setLoggedInUser] = useState(null);
 
@@ -42,7 +47,7 @@ const ChatDetail = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data, other_user, logged_in_user }),
+        body: JSON.stringify({ message:data.text, other_user, logged_in_user }),
       });
 
       if (!response.ok) {
@@ -57,7 +62,7 @@ const ChatDetail = () => {
     }
   };
 
-  const getChat = async () => {
+  const getChat = async (other_user) => {
     try {
       const response = await fetch("http://localhost:8000/chat/get_chat", {
         method: "POST",
@@ -73,6 +78,7 @@ const ChatDetail = () => {
 
       const result = await response.json();
       console.log("API Response (getChat):", result.data);
+      setMessages(result.data)
     } catch (error) {
       console.error("Error fetching chats:", error.message);
       alert("There was an error fetching chats. Please try again.");
@@ -81,9 +87,16 @@ const ChatDetail = () => {
 
   // Call getChat only when logged_in_user is set
   useEffect(() => {
-    if (logged_in_user) {
-      getChat();
+     // Ensure window is defined (to avoid errors during SSR)
+     if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const recieverValue = params.get('reciever');
+      setReciever(recieverValue); // Update state with the reciever value
+      if (logged_in_user) {
+        getChat(recieverValue);
+      }
     }
+
   }, [logged_in_user]);
 
   return (
@@ -120,7 +133,7 @@ const ChatDetail = () => {
 
       <div className="chat-part w-full h-[550px] overflow-y-scroll py-10 px-5">
         <h1 className="text-[#B6BBB8] text-[14px] font-semibold text-center">Today</h1>
-        {messages.map((msg, index) => (
+        {messages?.map((msg, index) => (
           <div key={index} className={`mt-[12px] ${index % 2 === 0 ? "text-left" : "text-right"}`}>
             <div
               className={`inline-flex gap-3 py-4 px-3 rounded-[12px] ${
@@ -132,7 +145,7 @@ const ChatDetail = () => {
                   index % 2 === 0 ? "text-[#262C2A]" : "text-[#FFFFFF]"
                 }`}
               >
-                {msg.text}
+                {msg.messages}
               </h3>
               <span className="text-[#768B82] text-[8px] font-semibold whitespace-nowrap pt-1">
                 {msg.timestamp}

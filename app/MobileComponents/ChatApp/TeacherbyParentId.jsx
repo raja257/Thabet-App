@@ -35,7 +35,7 @@ const TeacherbyParentId = () => {
     const _id = userData?._id || "674ecaceef1582fdeb22e3e1";
 
     const handleCardClick = (chatId) => {
-        router.push(`/chats/${chatId}`);
+        router.push(`/chats/chat?reciever=${chatId}`);
     };
 
     const getParentByTeacherId = async () => {

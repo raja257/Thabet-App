@@ -13,27 +13,27 @@ const TeacherParents = () => {
         if (storedData) {
             setUserData(storedData);
             setTimeout(()=>{
-                getParentByTeacherId()
+                getParentByTeacherId(storedData._id)
             },[1000])
         }
     }, []);
-    // const teacher_id = userData?._id;
-    // console.log(teacher_id,"id on parentttt")
-    const teacher_id = "674d917f8d57fb805897642e";
+    const teacher_id = userData?._id;
+    console.log(teacher_id,"id on parentttt")
+    // const teacher_id = "674d917f8d57fb805897642e";
   const router = useRouter();
   const text =
     "Thank you for the update. I’ll make sure Sarah reviews her notes.";
   const handleCardClick = (chatId) => {
-    router.push(`/chats/${chatId}`);
+    router.push(`/chats/chat?reciever=${chatId}`);
   };
-  const getParentByTeacherId = async () => {
+  const getParentByTeacherId = async (id) => {
     try {
       const response = await fetch("http://localhost:8000/class/get_parents_of_teacher_id", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ teacher_id }),
+        body: JSON.stringify({ teacher_id:id }),
       });
   
       if (!response.ok) {
