@@ -100,8 +100,9 @@ const Grade = () => {
     }
   };
   const router=useRouter()
-  const handleCardClick = (id) => {
-    router.push(`/grade/${id}`);
+  const handleCardClick = (id,name) => {
+    // router.push(`/grade/${id}`);
+    router.push(`/grade/singlegrade?grade=${id}&gradename=${name}`);
   };
   return (
     <>
@@ -115,7 +116,7 @@ const Grade = () => {
         {grades.map((grade, index) => (
           <div
             key={index}
-            onClick={() => handleCardClick(grade._id)}
+            onClick={() => handleCardClick(grade._id ,grade.class_name)}
             className="card w-full bg-[#E1E6E4] rounded-[12px] py-5 px-4 mb-[8px]"
           >
             <h2 className="text-[20px] font-medium text-[#000000]">

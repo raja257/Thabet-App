@@ -8,14 +8,11 @@ import { MdArrowBackIos } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
 import { MdOutlineFileUpload } from "react-icons/md";
 const SingleGradeTabContent = ({students,_id,handlegetStudent}) => {
-  console.log(_id,"datata")
   const [selectedCard, setSelectedCard] = useState(null); 
-  console.log(selectedCard,"selectedStudent")
   const [popupVisible, setPopupVisible] = useState(false); 
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState([]);
   const [userData, setUserData] = useState(null);
-  console.log(userData,"profile roles")
   const ids=userData?._id
   useEffect(() => {
     const data =JSON.parse(localStorage.getItem("userData")) ;
@@ -172,7 +169,6 @@ const fetchAttandance=async()=>{
           alert("There was an error saving the grade. Please try again.");
         }
 }
-
   const fileInputRef = useRef(null); 
 const [certificate, setCertificates] = useState([]);
 
@@ -265,7 +261,7 @@ const uploadCertificate = async (data) => {
             <div className="bg-white w-[100%] px-6 rounded-t-[24px] shadow-lg " onClick={(e) => e.stopPropagation()}>
               <div className="flex justify-center py-2"><CgLoadbar  className="text-[#C2CDC8] text-[24px]" /> </div>
             <div className='w-full user flex items-center gap-3 mt-[12px]'>
-            <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4]">
+            <div className="flex justify-center items-center w-[40px] h-[40px] rounded-[8px] text-[#768B82] text-[16px] font-bold bg-[#E1E6E4] uppercase">
             { selectedCard.full_name.split(" ").map(name => name.charAt(0)).join(" ")}
                 </div>
         <div>
@@ -308,10 +304,8 @@ const uploadCertificate = async (data) => {
           const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
           .toISOString()
           .split('T')[0];
-    
         const isSelected = attendance.includes(date);
-        const isFetched = getattendance.some((fetchedDate) => fetchedDate === date);
-
+        const isFetched = getattendance.some((fetchedDate) => fetchedDate === isSelected );
           return (
             <div
               key={index}
@@ -319,12 +313,12 @@ const uploadCertificate = async (data) => {
               className={`w-full h-10 flex items-center justify-center cursor-pointer rounded ${
                 day
                   ? isSelected && isFetched
-                    ? 'bg-blue-500 text-white' // Both selected and fetched
+                    ? 'bg-blue-500 text-white'
                     : isSelected
-                    ? 'bg-green-500 text-white' // Only selected
+                    ? 'bg-green-500 text-white' 
                     : isFetched
-                    ? 'bg-blue-300 text-black' // Only fetched
-                    : 'text-black hover:bg-gray-200' // Neither selected nor fetched
+                    ? 'bg-blue-300 text-black' 
+                    : 'text-black hover:bg-gray-200' 
                   : 'text-transparent'
               }`}
             >

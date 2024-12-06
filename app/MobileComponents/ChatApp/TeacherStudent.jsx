@@ -2,8 +2,6 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-
 const TeacherStudent = () => {
     const [userData, setUserData] = useState(null);
     const [student,setStudent]=useState([])
@@ -13,27 +11,25 @@ const TeacherStudent = () => {
         if (storedData) {
             setUserData(storedData);
             setTimeout(()=>{
-                getStudentByTeacherId()
+                getStudentByTeacherId(storedData._id)
             },[1000])
         }
     }, []);
-    // const teacher_id = userData?._id;
-    // console.log(teacher_id,"id on parentttt")
-    const _id = "674d917f8d57fb805897642e";
+  const teacher_id = userData?._id;
   const router = useRouter();
   const text =
     "Thank you for the update. I’ll make sure Sarah reviews her notes.";
   const handleCardClick = (chatId) => {
     router.push(`/chats/${chatId}`);
   };
-  const getStudentByTeacherId = async () => {
+  const getStudentByTeacherId = async (id) => {
     try {
       const response = await fetch("http://localhost:8000/class/get_student_by_teacher_id", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _id }),
+        body: JSON.stringify({ _id:id }),
       });
   
       if (!response.ok) {
@@ -61,9 +57,9 @@ const TeacherStudent = () => {
   return (
     <div className="w-full">
       <div className="w-full mt-5">
-        {chats.map((chat) => (
+        {chats.map((chat,i) => (
           <div
-            key={chat.id}
+            key={i}
             className="card mb-[16px] w-full flex justify-between items-center cursor-pointer"
             onClick={() => handleCardClick(chat.id)}
           >

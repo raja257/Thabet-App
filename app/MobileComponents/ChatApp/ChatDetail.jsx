@@ -11,8 +11,6 @@ import { FaPlus } from "react-icons/fa6";
 const ChatDetail = () => {
   // const params = useParams();
   const [reciever, setReciever] = useState('');
-
-  
   console.log(reciever,"recieverrr")
   const chatName = reciever;
   const other_user = chatName;

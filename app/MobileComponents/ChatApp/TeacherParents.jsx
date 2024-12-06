@@ -63,9 +63,9 @@ const TeacherParents = () => {
   return (
     <div className="w-full">
       <div className="w-full mt-5">
-        {chats.map((chat) => (
+        {chats.map((chat,i) => (
           <div
-            key={chat.id}
+            key={i}
             className="card mb-[16px] w-full flex justify-between items-center cursor-pointer"
             onClick={() => handleCardClick(chat.id)}
           >
@@ -89,7 +89,7 @@ const TeacherParents = () => {
                   </h3>
                 </div>
                 <div className="flex items-center gap-3">
-                  <h2 className="text-[#000000] text-[16px] font-medium">
+                  <h2 className="text-[#000000] text-[16px] font-medium capitalize">
                     {chat.name}
                   </h2>
                 </div>

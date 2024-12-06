@@ -3,23 +3,22 @@ import React, { useEffect, useState } from 'react';
 import { IoArrowBackSharp } from "react-icons/io5";
 import SingleGradeTabContent from './SingleGradeTabContent';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-const SingleGrade = () => {
-   
+// import { useParams, useRouter } from 'next/navigation';
+const SingleGrade = ({grade,gradename}) => {
     const [students,setStudents]=useState([])
     console.log(students,"fetch students")
-    const params = useParams();
-    const gradeName = params.singlegrade?.[0]; 
-    const _id=gradeName
+    // const params = useParams();
+    const gradeName = gradename
+    const _id=grade
     console.log(_id,"main iddd")
-    const handlegetStudent = async () => {
+    const handlegetStudent = async (id) => {
     try {
     const response = await fetch("http://localhost:8000/class/get_student", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({_id}),
+            body: JSON.stringify({_id:id}),
           });
   
           if (!response.ok) {
@@ -35,8 +34,11 @@ const SingleGrade = () => {
         }
       } 
     useEffect(()=>{
-      handlegetStudent()
-    },[])
+      if(grade){
+
+        handlegetStudent(grade)
+      }
+    },[grade])
   return (
     <>
     <div className='w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] py-5 px-4'>

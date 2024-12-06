@@ -97,7 +97,8 @@ const Profile = () => {
     }));
   const router=useRouter()
    const handleCertificate =(allstudents)=>{
-    router.push(`/profile/${allstudents}`);
+    // router.push(`/profile/${allstudents}`);
+    router.push(`/profile/certificate?reciever=${allstudents}`);
    }  
   const getStudentPeriods=async(student_id)=>{
     console.log(student_id,"iiddddddddd")

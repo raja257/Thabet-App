@@ -15,7 +15,7 @@ const Chatprofiles = () => {
         }
     }, []);
     const role = userData?.role;
-    const tabs = role === 'parent' ? ['teacher'] : ['teacher', 'Parent', 'Student'];
+    const tabs = role === 'parent' ? ['teacher'] : role === 'student' ?['teacher'] : ['Parent', 'Student'];
     return (
         <>
             <div className='w-full bg-[#0B2810] rounded-bl-[20px] rounded-br-[20px] py-5 px-4'>
@@ -28,7 +28,6 @@ const Chatprofiles = () => {
                     <FiSearch className='absolute top-3.5 text-[#C2CDC8] text-[18px] left-2' />
                 </div>
             </div>
-
             <div className="w-full mt-[16px] px-3">
                 <div className="w-full h-[46px] border-[1px] border-[#E1E6E4] bg-[#FFFFFF] rounded-[8px] flex justify-between items-center px-1">
                     {tabs.map((tab) => (

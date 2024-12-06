@@ -1,13 +1,24 @@
 "use client";
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { MdOutlineFileDownload } from "react-icons/md";
 const page = () => {
-  const params = useParams();
-  const name = params.certificate;
+  const [certi, setCerti] = useState('');
+  // const params = useParams();
+  const name = certi
   console.log(name);
+  useEffect(() => {
+    // Ensure window is defined (to avoid errors during SSR)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const recieverValue = params.get('certificate');
+      
+      setCerti(recieverValue);
+     
+    }
+  }, []);
 
   const handleDownload = (fileName) => {
     const link = document.createElement('a');
